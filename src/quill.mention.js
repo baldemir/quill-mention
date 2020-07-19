@@ -41,6 +41,10 @@ class Mention {
       blotName: "mention",
       dataAttributes: ["id", "value", "denotationChar", "link", "target"],
       linkTarget: "_blank",
+      multiList: false,
+      listHeader(item) {
+        return "";
+      },
       onOpen() {
         return true;
       },
@@ -172,12 +176,13 @@ class Mention {
     for (let i = 0; i < this.mentionList.childNodes.length; i += 1) {
       this.mentionList.childNodes[i].classList.remove("selected");
     }
-    this.mentionList.childNodes[this.itemIndex].classList.add("selected");
+    let el = this.mentionList.childNodes[this.itemIndex];
+    el.classList.add("selected");
 
     if (scrollItemInView) {
       const itemHeight = this.mentionList.childNodes[this.itemIndex]
         .offsetHeight;
-      const itemPos = this.itemIndex * itemHeight;
+      const itemPos = el.offsetTop;
       const containerTop = this.mentionContainer.scrollTop;
       const containerBottom = containerTop + this.mentionContainer.offsetHeight;
 
@@ -201,9 +206,9 @@ class Mention {
       this.mentionList.childNodes[
         this.itemIndex
       ].dataset.value = `<a href="${link}" target=${itemTarget ||
-        this.options.linkTarget}>${
+      this.options.linkTarget}>${
         this.mentionList.childNodes[this.itemIndex].dataset.value
-      }`;
+        }`;
     }
     return this.mentionList.childNodes[this.itemIndex].dataset;
   }
@@ -284,7 +289,17 @@ class Mention {
           ? this.options.listItemClass
           : "";
         li.dataset.index = i;
-        li.innerHTML = this.options.renderItem(data[i], searchTerm);
+        if (data[i].listId && (i == 0 || data[i].listId != data[i - 1].listId)) {
+          let headerDiv = document.createElement("div");
+          headerDiv.innerHTML = this.options.listHeader(data[i]);
+          let contentDiv = document.createElement("div");
+          contentDiv.appendChild(headerDiv);
+          contentDiv.innerHTML += this.options.renderItem(data[i], searchTerm);
+          contentDiv.style.width = "100%";
+          li.appendChild(contentDiv);
+        } else {
+          li.innerHTML = this.options.renderItem(data[i], searchTerm);
+        }
         li.onmouseenter = this.onItemMouseEnter.bind(this);
         li.dataset.denotationChar = mentionChar;
         li.onclick = this.onItemClick.bind(this);
