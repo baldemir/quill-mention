@@ -295,6 +295,9 @@ var Mention = /*#__PURE__*/function () {
       listHeader: function listHeader(item) {
         return "";
       },
+      footer: function footer() {
+        return "";
+      },
       onOpen: function onOpen() {
         return true;
       },
@@ -324,6 +327,10 @@ var Mention = /*#__PURE__*/function () {
     this.mentionList = document.createElement("ul");
     this.mentionList.className = this.options.mentionListClass ? this.options.mentionListClass : "";
     this.mentionContainer.appendChild(this.mentionList);
+    var footer = document.createElement("div");
+    footer.classList.add("ql-mention-footer");
+    footer.innerHTML = this.options.footer();
+    this.mentionContainer.appendChild(footer);
     this.quill.container.appendChild(this.mentionContainer);
     quill.on("text-change", this.onTextChange.bind(this));
     quill.on("selection-change", this.onSelectionChange.bind(this));
@@ -415,15 +422,15 @@ var Mention = /*#__PURE__*/function () {
       if (scrollItemInView) {
         var itemHeight = this.mentionList.childNodes[this.itemIndex].offsetHeight;
         var itemPos = el.offsetTop;
-        var containerTop = this.mentionContainer.scrollTop;
-        var containerBottom = containerTop + this.mentionContainer.offsetHeight;
+        var containerTop = this.mentionList.scrollTop;
+        var containerBottom = containerTop + this.mentionList.offsetHeight;
 
         if (itemPos < containerTop) {
           // Scroll up if the item is above the top of the container
-          this.mentionContainer.scrollTop = itemPos;
+          this.mentionList.scrollTop = itemPos;
         } else if (itemPos > containerBottom - itemHeight) {
           // scroll down if any part of the element is below the bottom of the container
-          this.mentionContainer.scrollTop += itemPos - containerBottom + itemHeight;
+          this.mentionList.scrollTop += itemPos - containerBottom + itemHeight;
         }
       }
     }
