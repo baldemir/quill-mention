@@ -292,6 +292,7 @@ class Mention {
         if (data[i].listId && (i == 0 || data[i].listId != data[i - 1].listId)) {
           let headerDiv = document.createElement("div");
           headerDiv.innerHTML = this.options.listHeader(data[i]);
+          headerDiv.classList.add("ql-mention-list-item-header");
           let contentDiv = document.createElement("div");
           contentDiv.appendChild(headerDiv);
           contentDiv.innerHTML += this.options.renderItem(data[i], searchTerm);
