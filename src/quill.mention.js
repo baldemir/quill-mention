@@ -45,6 +45,9 @@ class Mention {
       listHeader(item) {
         return "";
       },
+      footer() {
+        return "";
+      },
       onOpen() {
         return true;
       },
@@ -80,7 +83,10 @@ class Mention {
       ? this.options.mentionListClass
       : "";
     this.mentionContainer.appendChild(this.mentionList);
-
+    let footer = document.createElement("div");
+    footer.classList.add("ql-mention-footer");
+    footer.innerHTML = this.options.footer();
+    this.mentionContainer.appendChild(footer);
     this.quill.container.appendChild(this.mentionContainer);
 
     quill.on("text-change", this.onTextChange.bind(this));
@@ -183,15 +189,15 @@ class Mention {
       const itemHeight = this.mentionList.childNodes[this.itemIndex]
         .offsetHeight;
       const itemPos = el.offsetTop;
-      const containerTop = this.mentionContainer.scrollTop;
-      const containerBottom = containerTop + this.mentionContainer.offsetHeight;
+      const containerTop = this.mentionList.scrollTop;
+      const containerBottom = containerTop + this.mentionList.offsetHeight;
 
       if (itemPos < containerTop) {
         // Scroll up if the item is above the top of the container
-        this.mentionContainer.scrollTop = itemPos;
+        this.mentionList.scrollTop = itemPos;
       } else if (itemPos > containerBottom - itemHeight) {
         // scroll down if any part of the element is below the bottom of the container
-        this.mentionContainer.scrollTop +=
+        this.mentionList.scrollTop +=
           itemPos - containerBottom + itemHeight;
       }
     }
